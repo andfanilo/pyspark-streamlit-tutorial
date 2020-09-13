@@ -1,5 +1,6 @@
-import streamlit as st
 from typing import List
+
+import streamlit as st
 
 
 def add(a: int, b: int) -> int:
