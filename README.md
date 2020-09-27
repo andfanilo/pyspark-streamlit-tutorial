@@ -1,13 +1,51 @@
-# Pyspark Streamlit tutorial
+# Pyspark tutorial
 
-```
-conda create -n pyspark-streamlit-tutorial python=3.6
-conda activate pyspark-streamlit-tutorial
-pip install -e .
+Welcome to this set of Pyspark exercises with a Streamlit UI for interactive coding.
+
+The courses comprises of 3 list of exercises in Streamlit:
+
+- `src/beginner`: Python warm-up exercises to get you started
+- `src/novice`: Low-level Spark exercises using RDDs
+- `src/advanced`: High-level Spark exercises using the Dataframes API with Machine Learning
+
+Each folder exercise is associated to a Streamlit app to help you visualize your progression and guide interactive coding. If you are working on `src/beginner` then you should start the `app_beginner.py` script to help you out.
+
+## Prerequisites
+
+- [Anaconda 2019+](https://www.anaconda.com/download/)
+- Java 8. You may experience difficulties with Java 9. You can set the `JAVA_HOME` environment variable to point to the Java folder you want to use for the project. You may also install Java JDK 8 **inside** your Anaconda environment with `conda install -c cyclus java-jdk`.
+- To edit code, I suggest [Visual Studio Code](https://code.visualstudio.com/).
+
+## Installation
+
+We provide you with a `requirements.txt` which is used to download dependencies in a conda environment we will name `pyspark-tutorial`.
+
+First open an Anaconda prompt, then create the environment:
+
+```sh
+conda create -n pyspark-tutorial python=3.7
 ```
 
-Grade determined by number of tests passed through:
+Activate the environment, which will change your Python executable to use the environment one.
 
+```sh
+conda activate pyspark-tutorial
 ```
-pytest
+
+Finally, install the project dependencies in your newly activated environment:
+
+```sh
+pip install -r requirements.txt
 ```
+
+## Run
+
+Make sure you have activated your conda environment in an Anaconda promt. Then run a Streamlit script with:
+
+```sh
+streamlit run src/app_*.py
+```
+
+Streamlit's app should appear in a new tab in your web browser on http://localhost:8501!
+
+When you are done with the environment, don't forget to deactivate your Anaconda environment : `conda deactivate`

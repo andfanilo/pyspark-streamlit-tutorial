@@ -13,10 +13,11 @@ def _initialize_spark() -> SparkContext:
 
 
 def display_about(sc: SparkContext):
-    st.title("Spark RDDs")
-
+    st.title("Introduction to Spark Resilient Distributed Datasets (RDD)")
     st.markdown(
         """
+    ![Spark logo](http://spark.apache.org/images/spark-logo-trademark.png)
+
     Apache Spark is a cluster computing engine designed to be fast and general-purpose, 
     making it the ideal choice for processing of large datasets. 
     It answers those two points with efficient data sharing accross computations.
@@ -51,10 +52,69 @@ def display_about(sc: SparkContext):
     """
     )
 
-    st.markdown(f"Head to http://localhost:4040 to see the Spark interface")
+
+def display_prerequisites(sc: SparkContext):
+    st.title("Initializing Spark")
+    st.markdown(
+        """
+    Before running Spark code, we need to start a SparkContext instance, 
+    which connects to a Spark cluster. 
+    The following code block starts a local Spark cluster and its associated SparkContext. 
+    This is done at the beginning of the Streamlit app so you don't have to think about it.
+
+    ```python
+    conf = SparkConf()
+        .setAppName("lecture-lyon2")  # name of the Spark application
+        .setMaster("local")  # which Spark cluster to connect to. If it's a remote cluster you will need to add additional info there
+    sc = SparkContext.getOrCreate(conf=conf)
+    ```
+
+    While your SparkContext is running, you can hit http://localhost:4040 
+    to get an overview of your Spark local cluster and all operations ongoing. Try it now :tada:!
+    """
+    )
 
 
 def display_q1(sc: SparkContext):
+    st.title("Creating RDDs")
+    if st.checkbox("Introduction", False):
+        st.markdown(
+            """
+        In this section, we are going to introduce Spark's core abstraction for working with data 
+        in a distributed and resilient way: the **Resilient Distributed Dataset**, or RDD. 
+        Under the hood, Spark automatically performs the distribution of RDDs and its processing around 
+        the cluster, so we can focus on our code and not on distributed processing problems, 
+        such as the handling of data locality or resiliency in case of node failure.
+
+        A RDD consists of a collection of elements partitioned accross the nodes of a cluster of machines 
+        that can be operated on in parallel. 
+        In Spark, work is expressed by the creation and transformation of RDDs using Spark operators.
+        """
+        )
+        st.image("./img/spark-rdd.png", use_column_width=True)
+        st.markdown(
+            """
+        _Note_: RDD is the core data structure to Spark, but the style of programming we are studying 
+        in this lesson is considered the _lowest-level API_ for Spark. 
+        The Spark community is pushing the use of Structured programming with Dataframes/Datasets instead, 
+        an optimized interface for working with structured and semi-structured data, 
+        which we will learn later. 
+        Understanding RDDs is still important because it teaches you how Spark works under the hood 
+        and will serve you to understand and optimize your application when deployed into production.
+
+        There are two ways to create RDDs: parallelizing an existing collection in your driver program, 
+        or referencing a dataset in an external storage system, 
+        such as a shared filesystem, HDFS, HBase, or any data source offering a Hadoop InputFormat.
+        """
+        )
+
+    st.subheader("Question 1 - From Python collection to RDD")
+    st.markdown(
+        """
+    Edit the `rdd_from_list` method in `src/novice/rdd.py` 
+    to generate a Python list and transform it into a Spark RDD.
+    """
+    )
     test_rdd_from_list(sc)
     st.success("You've solved the exercise!")
 
@@ -71,13 +131,34 @@ def display_q4(sc: SparkContext):
     return
 
 
+def display_pagerank(sc: SparkContext):
+    return
+
+
+def display_resources(sc: SparkContext):
+    st.title("Resources")
+    st.markdown(
+        """
+    List of resources to help you:
+
+    - [Pyspark lecture](https://andfanilo.github.io/pyspark-interactive-lecture/#/)
+    - [Spark docs page](https://spark.apache.org/docs/latest/)
+    - [PySpark API](https://spark.apache.org/docs/latest/api/python/index.html)
+
+    """
+    )
+
+
 def main():
     pages = {
-        "About": display_about,
-        "Part 1": display_q1,
-        "Part 2": display_q2,
-        "Part 3": display_q3,
-        "Part 4": display_q4,
+        "Introduction to RDDs": display_about,
+        "Prerequisites - Spark Initialization": display_prerequisites,
+        "1 - Building your first RDDs": display_q1,
+        "2 - Operations on RDDs": display_q2,
+        "3 - Using Key-value RDDs": display_q3,
+        "4 - Manipulating a CSV file": display_q4,
+        "5 - Application to Pagerank": display_pagerank,
+        "Resources": display_resources,
     }
     st.sidebar.header("Questions")
     sc = _initialize_spark()

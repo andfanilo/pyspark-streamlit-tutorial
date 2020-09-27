@@ -8,5 +8,6 @@ def rdd_from_list(sc: SparkContext, n: int) -> RDD:
     For now we assume we will always get n > 1, no need to test for the exception nor raise an Exception.
     """
     # YOUR CODE HERE
-    # st.write(sc.parallelize([1, 2, 3]).collect())
+    st.info("_Don't forget you can print any value in the Streamlit app_")
+    st.write(range(10))
     raise NotImplementedError()
