@@ -100,3 +100,23 @@ def test_mean_grade_per_gender(spark_context):
     result = result_rdd.collectAsMap()
     result["M"] - 7.3 < 0.1
     result["F"] - 11.3 < 0.1
+
+
+def test_filter_header(spark_context):
+    header = "policyID,statecode,county,eq_site_limit,hu_site_limit,fl_site_limit,fr_site_limit,tiv_2011,tiv_2012,eq_site_deductible,hu_site_deductible,fl_site_deductible,fr_site_deductible,point_latitude,point_longitude,line,construction,point_granularity"
+    file = load_file_to_rdd(spark_context, "./data/FL_insurance_sample.csv")
+    result_rdd = filter_header(spark_context, file)
+
+    assert isinstance(result_rdd, RDD)
+    assert file.filter(lambda line: line == header).collect()
+    assert not result_rdd.filter(lambda line: line == header).collect()
+
+
+def test_county_count(spark_context):
+    file_rdd = filter_header(
+        spark_context, load_file_to_rdd(spark_context, "./data/FL_insurance_sample.csv")
+    )
+    county_rdd = county_count(spark_context, file_rdd)
+
+    result = county_count(spark_context, county_rdd).collectAsMap()
+    assert result["CLAY COUNTY"] == 346

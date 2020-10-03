@@ -66,3 +66,25 @@ def mean_grade_per_gender(sc: SparkContext, genders: RDD, grades: RDD) -> RDD:
     """
     # YOUR CODE HERE
     raise NotImplementedError()
+
+
+def filter_header(sc: SparkContext, rdd: RDD) -> RDD:
+    """From a RDD of lines from a text file, remove the first line."""
+    # YOUR CODE HERE
+    raise NotImplementedError()
+
+
+def county_count(sc: SparkContext, rdd: RDD) -> RDD:
+    """Return a RDD of key,value with county as key, count as values"""
+    # YOUR CODE HERE
+    raise NotImplementedError()
+
+
+def bar_chart_county(sc: SparkContext, rdd: RDD) -> None:
+    """Display a bar chart for the number of occurences for each county
+    with Matplotlib, Bokeh, Plotly or Altair...
+
+    Don't return anything, just display in the function directly
+    """
+    # YOUR CODE HERE
+    raise NotImplementedError()

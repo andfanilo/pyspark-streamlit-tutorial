@@ -349,6 +349,51 @@ def display_q3(sc: SparkContext):
 
 
 def display_q4(sc: SparkContext):
+    st.title("Manipulating a CSV file")
+    st.markdown(
+        """
+    We provide a `FL_insurance_sample.csv` file inside the `data` folder to use in our computations, 
+    it will be loaded through  `load_file_to_rdd()` you have previously implemented.
+
+    The first line of the CSV is the header, and it is annoying to have it mixed with the data. 
+    In the lower-level RDD API we need to write code to specifically filter that first line.
+
+    Edit the `filter_header` method to remove the first element of a RDD.
+    """
+    )
+    with st.beta_expander("Hint ?"):
+        st.markdown(
+            """
+        **Hint** : `rdd.zipwithindex()` is a useful function when you need to filter by position 
+        in a file _(though it is computationally expensive)_.
+        """
+        )
+    test_filter_header(sc)
+    display_exercise_solved()
+
+    st.markdown(
+        """
+    Let's try some statistics on the `county` variable, which is the second column of the dataset.
+
+    Edit `test_county_count` to return the number of times each county appears
+    """
+    )
+    test_county_count(sc)
+    display_exercise_solved()
+
+    st.markdown(
+        """
+    A little bonus. Streamlit can display plots directly:
+    * Matplotlib: `st.pyplot`
+    * Plotly: `st.plotly_chart`
+    * Bokeh: `st.bokeh_chart`
+    * Altair: `st.altair_chart`
+
+    So as a bonus question, display a bar chart of number of occurrences 
+    for each county directly in the app by editing the `bar_chart_county` method.
+    """
+    )
+    bar_chart_county()
     display_goto_next_section()
 
 
