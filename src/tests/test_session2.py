@@ -65,3 +65,38 @@ def test_op4(spark_context):
     result = op4(spark_context, numbers_rdd)
 
     assert result == 166650
+
+
+def test_wordcount(spark_context):
+    sentences_rdd = spark_context.parallelize(
+        ["Hi everybody", "My name is Fanilo", "and your name is Antoine everybody"]
+    )
+    result_rdd = wordcount(spark_context, sentences_rdd)
+
+    assert isinstance(result_rdd, RDD)
+    assert result_rdd.collect() == [
+        ("Hi", 1),
+        ("everybody", 2),
+        ("My", 1),
+        ("name", 2),
+        ("is", 2),
+        ("Fanilo", 1),
+        ("and", 1),
+        ("your", 1),
+        ("Antoine", 1),
+    ]
+
+
+def test_mean_grade_per_gender(spark_context):
+    genders_rdd = spark_context.parallelize(
+        [("1", "M"), ("2", "M"), ("3", "F"), ("4", "F"), ("5", "F"), ("6", "M")]
+    )
+    grades_rdd = spark_context.parallelize(
+        [("1", 5), ("2", 12), ("3", 7), ("4", 18), ("5", 9), ("6", 5)]
+    )
+
+    result_rdd = mean_grade_per_gender(spark_context, genders_rdd, grades_rdd)
+    assert isinstance(result_rdd, RDD)
+    result = result_rdd.collectAsMap()
+    result["M"] - 7.3 < 0.1
+    result["F"] - 11.3 < 0.1

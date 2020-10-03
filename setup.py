@@ -30,5 +30,5 @@ setuptools.setup(
         "streamlit >= 0.66",
         "pyspark >= 3.0.0",
         "pytest",
-    ]
+    ],
 )

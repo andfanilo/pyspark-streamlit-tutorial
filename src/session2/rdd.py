@@ -45,8 +45,24 @@ def op3(sc: SparkContext, numbers: RDD) -> RDD:
 
 
 def op4(sc: SparkContext, numbers: RDD) -> RDD:
+    """Return the sum of all squared odd numbers"""
     # YOUR CODE HERE
     st.info(
         "_Now's a good time to tell you that chaining RDD transformations is possible..._"
     )
+    raise NotImplementedError()
+
+
+def wordcount(sc: SparkContext, sentences: RDD) -> RDD:
+    """Given a RDD of sentences, return the wordcount, after splitting sentences per whitespace."""
+    # YOUR CODE HERE
+    # st.write(sc.parallelize(range(10)).map(lambda num: (num % 2, num)).reduceByKey(lambda x,y: x+y).collect())
+    raise NotImplementedError()
+
+
+def mean_grade_per_gender(sc: SparkContext, genders: RDD, grades: RDD) -> RDD:
+    """Given a RDD of studentID to grades and studentID to gender, compute mean grade for each gender returned as paired RDD.
+    Assume all studentIDs are present in both RDDs, making inner join possible, no need to check that.
+    """
+    # YOUR CODE HERE
     raise NotImplementedError()

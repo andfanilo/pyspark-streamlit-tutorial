@@ -5,6 +5,7 @@ from pyspark import SparkContext
 from src.tests.test_session2 import *
 from src.utils import display_exercise_solved
 from src.utils import display_goto_next_section
+from src.utils import display_goto_next_session
 
 
 def _initialize_spark() -> SparkContext:
@@ -274,6 +275,76 @@ def display_q2(sc: SparkContext):
 
 
 def display_q3(sc: SparkContext):
+    st.title("Using Key-value RDDs")
+    st.markdown(
+        """
+    If you recall the classic MapReduce paradigm, you were dealing with key/value pairs 
+    to reduce your data in a distributed manner. 
+    We define a pair as a tuple of two elements, 
+    the first element being the key and the second the value.
+
+    Key/value pairs are good for solving many problems efficiently in a parallel fashion 
+    so let us delve into them.
+    ```python
+    pairs = [('b', 3), ('d', 4), ('a', 6), ('f', 1), ('e', 2)]
+    pairs_rdd = sc.parallelize(pairs)
+    ```
+
+    ### reduceByKey
+
+    The `.reduceByKey()` method works in a similar way to the `.reduce()`, 
+    but it performs a reduction on a key-by-key basis.
+    The following counts the sum of all values for each key.
+    ```python
+    pairs = [('b', 3), ('d', 4), ('a', 6), ('f', 1), ('e', 2)]
+    pairs_rdd = sc.parallelize(pairs).reduceByKey(lambda x,y: x+y)
+    ```
+    """
+    )
+
+    st.header("Time for the classic Hello world question !")
+    st.markdown(
+        "You know the drill. Edit `wordcount()` to count the number of occurences of each word."
+    )
+    test_wordcount(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 2 - Joins")
+    with st.beta_expander("About joins"):
+        st.markdown(
+            """
+        The `.join()` method joins two RDD of pairs together on their key element.
+        
+        ```python
+        genders_rdd = sc.parallelize([('1', 'M'), ('2', 'M'), ('3', 'F'), ('4', 'F'), ('5', 'F'), ('6', 'M')])
+        grades_rdd = sc.parallelize([('1', 5), ('2', 12), ('3', 7), ('4', 18), ('5', 9), ('6', 5)])
+
+        genders_rdd.join(grades_rdd)
+        ```
+        """
+        )
+    st.markdown(
+        """
+    Let's give ourselves a `student-gender` RDD and a `student-grade` RDD. 
+    Compute the mean grade for each gender.
+    """
+    )
+
+    with st.beta_expander("Hint ?"):
+        st.markdown(
+            """
+        _This is a long exercise._
+        Remember that the mean for a gender equals the sum of all grades 
+        divided by the count of the number of grades. 
+
+        You already know how to sum by key, 
+        and you can use the `countByKey()` function for returning a hashmap of gender to count of grades, 
+        then use that hashmap inside a map function to divide. 
+        
+        Good luck !
+        """
+        )
+    test_mean_grade_per_gender()
     display_goto_next_section()
 
 
