@@ -2,7 +2,7 @@ import streamlit as st
 from pyspark import SparkConf
 from pyspark import SparkContext
 
-from src.tests.test_novice import test_rdd_from_list
+from src.tests.test_session2 import test_rdd_from_list
 
 
 def _initialize_spark() -> SparkContext:
@@ -111,8 +111,13 @@ def display_q1(sc: SparkContext):
     st.subheader("Question 1 - From Python collection to RDD")
     st.markdown(
         """
-    Edit the `rdd_from_list` method in `src/novice/rdd.py` 
+    Edit the `rdd_from_list` method in `src/session2/rdd.py` 
     to generate a Python list and transform it into a Spark RDD.
+
+    Ex:
+    ```python
+    rdd_from_list([1, 2, 3]) should be a RDD with values [1, 2, 3]
+    ```
     """
     )
     test_rdd_from_list(sc)

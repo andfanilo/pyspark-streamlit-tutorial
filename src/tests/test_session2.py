@@ -1,6 +1,6 @@
 from pyspark.rdd import RDD
 
-from src.novice.rdd import rdd_from_list
+from src.session2.rdd import rdd_from_list
 
 
 def test_rdd_from_list(spark_context):

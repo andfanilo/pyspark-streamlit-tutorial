@@ -1,6 +1,6 @@
-from src.beginner.hello import add
-from src.beginner.hello import is_unique
-from src.beginner.hello import squared
+from src.session1.hello import add
+from src.session1.hello import is_unique
+from src.session1.hello import squared
 
 
 def test_add():
