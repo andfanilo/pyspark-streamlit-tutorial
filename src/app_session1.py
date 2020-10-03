@@ -3,12 +3,15 @@ import streamlit as st
 from src.tests.test_session1 import test_add
 from src.tests.test_session1 import test_is_unique
 from src.tests.test_session1 import test_squared
+from src.utils import display_exercise_solved
+from src.utils import display_goto_next_section
+from src.utils import display_goto_next_session
 
 
 def display_about():
     st.title("Warm up")
     st.markdown(
-    """
+        """
     In this part, we solve simple Python exercises to warm up and understand the tutorial setup.
 
     * This is a Streamlit app. It will guide you through the questions in an interactive way.
@@ -26,7 +29,7 @@ def display_about():
 def display_q1():
     st.subheader("Question 1 - Sum of two numbers")
     st.markdown(
-    """
+        """
     Edit the `add` method in `src/session1/hello.py` to return the sum of 2 numbers.
 
     Ex:
@@ -36,13 +39,14 @@ def display_q1():
     """
     )
     test_add()
-    st.success("You've solved the exercise!")
+    display_exercise_solved()
+    display_goto_next_section()
 
 
 def display_q2():
     st.subheader("Question 2 - Square numbers in the list")
     st.markdown(
-    """
+        """
     Edit the `squared` method in `src/session1/hello.py` to square all elements in a list.
     
     Ex:
@@ -52,13 +56,14 @@ def display_q2():
     """
     )
     test_squared()
-    st.success("You've solved the exercise!")
+    display_exercise_solved()
+    display_goto_next_section()
 
 
 def display_q3():
     st.subheader("Question 3 - Are all elements unique ?")
     st.markdown(
-    """
+        """
     Edit the `is_unique` method in `src/session1/hello.py` to return `True` if all elements are unique
     and `False` otherwise.
 
@@ -67,9 +72,11 @@ def display_q3():
     is_unique([2, 5, 9, 7]) should be True
     is_unique([2, 5, 5, 7]) should be False
     ```
-    """)
+    """
+    )
     test_is_unique()
-    st.success("You've solved the exercise!")
+    display_exercise_solved()
+    display_goto_next_session()
 
 
 def main():

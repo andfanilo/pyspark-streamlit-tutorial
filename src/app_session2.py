@@ -2,7 +2,9 @@ import streamlit as st
 from pyspark import SparkConf
 from pyspark import SparkContext
 
-from src.tests.test_session2 import test_rdd_from_list
+from src.tests.test_session2 import *
+from src.utils import display_exercise_solved
+from src.utils import display_goto_next_section
 
 
 def _initialize_spark() -> SparkContext:
@@ -76,8 +78,8 @@ def display_prerequisites(sc: SparkContext):
 
 
 def display_q1(sc: SparkContext):
-    st.title("Creating RDDs")
-    if st.checkbox("Introduction", False):
+    st.title("Building your first RDDs")
+    with st.beta_expander("Introduction"):
         st.markdown(
             """
         In this section, we are going to introduce Spark's core abstraction for working with data 
@@ -121,23 +123,166 @@ def display_q1(sc: SparkContext):
     """
     )
     test_rdd_from_list(sc)
-    st.success("You've solved the exercise!")
+    display_exercise_solved()
+
+    st.subheader("Question 2 - From text file to RDD")
+    st.markdown(
+        """
+    Edit the `load_file_to_rdd` method in `src/session2/rdd.py` 
+    to generate a Spark RDD from a text file. 
+    
+    Each line of the file will be an element of the RDD.
+
+    Ex:
+    ```python
+    load_file_to_rdd("./data/FL_insurance_sample.csv") should be a RDD with each line an element of the RDD
+    ```
+    """
+    )
+    test_rdd_from_list(sc)
+    display_exercise_solved()
+    display_goto_next_section()
 
 
 def display_q2(sc: SparkContext):
-    return
+    st.title("Operations on RDDs")
+    with st.beta_expander("Introduction"):
+        st.markdown(
+            """
+        RDDs have two sets of parallel operations:
+
+        * transformations : which return pointers to new RDDs without computing them, it rather waits for an action to compute itself.
+        * actions : which return values to the driver after running the computation. The `collect()` funcion is an operation which retrieves all elements of the distributed RDD to the driver.
+
+        RDD transformations are _lazy_ in a sense they do not compute their results immediately.
+
+        The following exercises study the usage of the most common Spark RDD operations.
+        """
+        )
+    st.subheader("Question 1 - Map")
+    with st.beta_expander(".map() and flatMap() transformation"):
+        st.markdown(
+            """
+        The `.map(function)` transformation applies the function given in argument to each of the elements 
+        inside the RDD. 
+
+        The following sums every number in the RDD by one, in a distributed manner.
+        ```python
+        sc.parallelize([1,2,3]).map(lambda num: num+1)
+        ```
+
+        The `.flatMap(function)` transformation applies the function given in argument to each of the elements 
+        inside the RDD, then flattens the list so that there are no more nested elements inside it. 
+        
+        The following splits each line of the RDD by the comma and returns all numbers in a unique RDD.
+        ```python
+        sc.parallelize(["1,2,3", "2,3,4", "4,5,3"]).flatMap(lambda csv_line: csv_line.split(","))
+        ```
+        ---
+        """
+        )
+        st.markdown(
+            """
+        What would be the result of:
+        ```python
+        sc.parallelize(["1,2,3", "2,3,4", "4,5,3"]).map(lambda csv_line: csv_line.split(","))
+        ```
+        ?
+
+        ---
+        """
+        )
+    st.markdown(
+        """
+    Suppose we have a RDD containing only lists of 2 elements :
+
+    ```python
+    matrix = [[1,3], [2,5], [8,9]]
+    matrix_rdd = sc.parallelize(matrix)
+    ```
+
+    This data structure is reminiscent of a matrix.
+
+    Edit the method `op1()` to  multiply the first column (or first coordinate of each element) 
+    of the matrix by 2, and removes 3 to the second column (second coordinate).
+    """
+    )
+    test_op1(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 2 - Extracting words from sentences")
+    st.markdown(
+        """
+    Suppose we have a RDD containing sentences :
+
+    ```python
+    sentences_rdd = sc.parallelize(
+        ['Hi everybody', 'My name is Fanilo', 'and your name is Antoine everybody'
+    ])
+    ```
+
+    Edit `op2()` which returns all the words in the rdd, after splitting each sentence by the whitespace character.
+        
+    """
+    )
+    test_op2(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 3 - Filtering")
+    st.markdown(
+        """
+    The `.filter(function)` transformation let's us filter elements verify a certain function.
+
+    Suppose we have a RDD containing numbers.
+
+    Edit `op3()` to returns all the odd numbers.
+    """
+    )
+    test_op3(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 4 - Reduce")
+    with st.beta_expander("About reduce"):
+        st.markdown(
+            """
+        The `.reduce(function)` transformation reduces all elements of the RDD into one 
+        using a specific method.
+
+        This next example sums elements 2 by 2 in a distributed manner, 
+        which will produce the sum of all elements in the RDD.
+        ```python
+        sc.parallelize([1,2,3,4,5]).map(lambda x,y: x + y)
+        ```
+
+        Do take note that, as in the Hadoop ecosystem, the function used to reduce the dataset 
+        should be associative and commutative.
+
+        ---
+        """
+        )
+
+    st.markdown(
+        """
+    Suppose we have a RDD containing numbers.
+
+    Create an operation `.op4()` which returns the sum of 
+    all squared odd numbers in the RDD, using the `.reduce()` operation.
+    """
+    )
+    test_op4(sc)
+    display_goto_next_section()
 
 
 def display_q3(sc: SparkContext):
-    return
+    display_goto_next_section()
 
 
 def display_q4(sc: SparkContext):
-    return
+    display_goto_next_section()
 
 
 def display_pagerank(sc: SparkContext):
-    return
+    display_goto_next_session()
 
 
 def display_resources(sc: SparkContext):
