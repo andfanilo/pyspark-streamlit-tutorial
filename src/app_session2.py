@@ -398,6 +398,269 @@ def display_q4(sc: SparkContext):
 
 
 def display_pagerank(sc: SparkContext):
+    st.title("Computing Pagerank")
+    st.warning(
+        """
+        This final bit is algorithmically heavy :skull:
+        
+        Take your time, and good luck!
+    """
+    )
+    st.markdown(
+        """
+    PageRank is a function that assigns a real number to each page in the Web 
+    (or at least to that portion of the Web that has been crawled and its links discovered). 
+    The intent is that the higher the PageRank of a page, the more "important" it is.
+
+    Hadoop has its origins in Apache Nutch, an open source web search engine, 
+    and one of the first use cases for Big Data technologies and MapReduce was the indexing 
+    of millions of webpages. 
+
+    > In the following application, we will delve into an implementation of an iterative algorithm, 
+    the PageRank, which is well suited to Spark. You have to imagine your Pagerank implementation
+    will run on Petabytes of web crawler logs to compute the ranking of the web URLs!
+
+    We will deal with the following simplified web system :
+    """
+    )
+    st.image("./img/pagerank.png", width=400)
+    st.markdown(
+        """
+    We have four web pages (a, b, c, and d) in our system :
+
+    * Web page A has outbound links to pages B, C, D
+    * Web page B has outbound links to C, D
+    * Web page C has outbound link to B
+    * Web page D has outbound link to A, C
+
+    We will implement a [simpler version of PageRank](https://en.wikipedia.org/wiki/PageRank#Simplified_algorithm) 
+    in PySpark, in the `src/session2/pagerank.py` file.
+
+    ## Input Data
+
+    When crawling the Web for URLs and their outbound links, 
+    web crawlers will append all the new data in the same file. 
+    As such we expect the format to be the following when reading from the filesystem, 
+    which is easier to append on. Let's call it the **long form**.
+
+    ```
+    URL1         neighbor1
+    URL1         neighbor2
+    URL2         neighbor1
+    ...
+    ```
+
+    We could also work on a data structure where all neighbors of the same URL are grouped on one line.
+    Let's call this the **wide form**.
+
+    ```
+    URL1   [neighbor1, neighbor2]
+    URL2   [neighbor1]
+    ...
+    ```
+
+    Let's build two functions to alternate between both representations.
+    """
+    )
+
+    st.subheader("Question 1.1 - From wide to long")
+    st.markdown(
+        """
+        Generate a web system as a RDD of tuples (page name, neighbor page name) 
+        from a RDD of tuples (page name, list of all neighbors), by editing the `ungroup_input` method.
+
+        _Hint: we are working with PairedRDDs here, don't hesitate to check the_
+        _[API reference](https://spark.apache.org/docs/2.2.0/api/python/pyspark.html#pyspark.RDD)_
+        _of RDDs for functions like `mapValues` or `flatMapValues`_
+    """
+    )
+    test_ungroup_input(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 1.2 - From long to wide")
+    st.markdown(
+        """
+        Generate a web system as a RDD of tuples (page name, list of all neighbors)
+        from a RDD of tuples (page name, neighbor page name), by editing the `group_input` method.
+
+        _Hint: Never hesitate to collect and print your RDD in the method using Streamlit._
+        _You may most notably find out that `pyspark.resultiterable.ResultIterable` is not the result we want to return._
+    """
+    )
+    test_group_input(sc)
+    display_exercise_solved()
+
+    st.header("Question 2 - Page Contributions")
+    st.image("./img/pagerank.png", width=400)
+    st.markdown(
+        """
+    PageRank is an iterative program, for each iteration a page gets empowered 
+    by every other page that links to it.
+
+    At each iteration, we need to compute what a given URL contributes to the rank of other URLs. 
+    The PageRank transferred from a given page to the targets of its outbound links 
+    upon the next iteration is divided equally among all outbound links.
+    """
+    )
+    st.latex(
+        r"Contribution\ to\ a\ page = \frac{pagerank\ of\ contributing\ page}{number\ outbound\ links\ from\ contributing\ page}"
+    )
+    st.markdown(
+        """
+    > So for example, if page A has pagerank 3, it will contribute 1 to B, 1 to C and 1 to D.
+
+    Then, for a page, we will sum the contributions of every page linking to it.
+
+    > So B should receive contributions from A anc C's pageranks.
+
+    Finally, the update pagerank for a page, given a damping factor $s$ will be :
+    """
+    )
+    st.latex(
+        r"pagerank(u) = 1 - s + s \times \sum_{v \in B_u} \frac{pagerank(v)}{L(v)}"
+    )
+    st.markdown(
+        """
+    i.e. the PageRank value for a page $u$ is dependent on the PageRank values for each page $v$ 
+    contained in the set $B_u$ (the set containing all pages linking to page $u$), 
+    divided by the number $L(v)$ of links from page $v$.
+    """
+    )
+
+    st.subheader("Question 2.1 - Split a pagerank into contributions to outbound links")
+    st.markdown(
+        """
+    First, we are going to build the page contribution of a page to a set of outbound urls 
+    in `compute_contribs`. 
+    
+    The first arugment gives the outbound links of a page, 
+    the second argument gives the rank of the page, 
+    and we return a list of tuples (outbound url, contribution to the outbound url).
+    """
+    )
+    st.warning(
+        """:balloon: We will **NOT** be using Spark for this question.
+    We assume a Python worker is capable of working this out.
+    """
+    )
+    st.markdown(
+        """
+    Ex:
+    ```python
+    assert compute_contributions(['b', 'c', 'd'], 1) == [('b', 1/3), ('c', 1/3), ('d', 1/3)]
+    ```
+    """
+    )
+    test_compute_contributions()
+    display_exercise_solved()
+
+    st.subheader("Question 2.2 - Generate a RDD of all contributions")
+    st.markdown(
+        """
+    Let's assume we maintain the following two key-value RDD structures:
+
+    * links RDD
+
+    ```
+    page1    [list of neighbors to page1]
+    page2    [list of neighbors to page2]
+    ...
+    ```
+
+    * ranks RDD
+
+    ```
+    page1    rank1
+    page2    rank2
+    ...
+    ```
+
+    With the help from `compute_contributions`, 
+    build the `generate_contributions` method, 
+    which returns a key-value RDD of all generated contributions of the form 
+    (URL, contributed rank by one of its parent page) using the links and ranks RDD.
+
+    ```
+    A    contribution_to_B
+    A    contribution_to_C
+    A    contribution_to_D
+    B    contribution_to_C
+    B    contribution_to_D
+    ...
+    ```
+    """
+    )
+    test_generate_contributions(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 2.3 - Apply damping and generate the new pagerank")
+    st.markdown(
+        """
+    In `generate_ranks`, compute new ranks for each URL by summing all contributions from outbound URL, 
+    and applying the damping factor.
+    """
+    )
+    test_generate_ranks(sc)
+    display_exercise_solved()
+
+    st.subheader("Question 3 - Building the main algorithm")
+    st.markdown(
+        """
+    Let's build the iteration. At each step :
+
+    1. Generate all contributions with `generate_contributions`
+    2. Update ranks RDD with `generate_ranks`
+
+    We provide a function to initialize the web system from the image and initial ranls:
+    """
+    )
+
+    with st.echo("below"):
+
+        def initialize(sc):
+            """
+            Initialize links and ranks RDDs
+            """
+            # Loads all URLs from input file and initialize their neighbors.
+            links = sc.parallelize(
+                [
+                    ("a", "b"),
+                    ("a", "c"),
+                    ("a", "d"),
+                    ("c", "b"),
+                    ("b", "c"),
+                    ("b", "d"),
+                    ("d", "a"),
+                    ("d", "c"),
+                ]
+            )
+            links = group_input(
+                sc, links
+            ).cache()  # put the links RDD in cache because it will be reused a lot
+
+            # Initialize all ranks to 0.25
+            ranks = links.keys().map(lambda url: (url, 0.25))
+
+            return (links, ranks)
+
+    st.markdown(
+        """
+    Let's create a Pandas dataframe with columns \[a, b, c, d\]. 
+    At each iteration, add a row with the Pagerank value for each node in the corresponding column. 
+    Then return the Pandas dataframe as a result so we can investigate it.
+    """
+    )
+    test_main(sc)
+    display_exercise_solved()
+
+    st.markdown(
+        """So do you want to visualize the convergence of pagerank ? Let's do this !"""
+    )
+    if st.button("Run Pagerank algorithm"):
+        links, ranks = initialize(sc)
+        result = main(sc, 25, 0.85, links, ranks)
+        st.write(result.plot())
+
     display_goto_next_session()
 
 

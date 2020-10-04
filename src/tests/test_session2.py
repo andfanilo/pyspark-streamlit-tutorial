@@ -1,6 +1,7 @@
 from pyspark.rdd import RDD
 
 from src.session2.rdd import *
+from src.session2.pagerank import *
 
 
 def test_rdd_from_list(spark_context):
@@ -120,3 +121,118 @@ def test_county_count(spark_context):
 
     result = county_count(spark_context, county_rdd).collectAsMap()
     assert result["CLAY COUNTY"] == 346
+
+
+def test_ungroup_input(spark_context):
+    system = spark_context.parallelize(
+        [("a", ["b", "c", "d"]), ("c", ["b"]), ("b", ["c", "d"]), ("d", ["a", "c"])]
+    )
+    result = ungroup_input(spark_context, system).collect()
+    assert result == [
+        ("a", "b"),
+        ("a", "c"),
+        ("a", "d"),
+        ("c", "b"),
+        ("b", "c"),
+        ("b", "d"),
+        ("d", "a"),
+        ("d", "c"),
+    ]
+
+
+def test_group_input(spark_context):
+    system = spark_context.parallelize(
+        [
+            ("a", "b"),
+            ("a", "c"),
+            ("a", "d"),
+            ("c", "b"),
+            ("b", "c"),
+            ("b", "d"),
+            ("d", "a"),
+            ("d", "c"),
+        ]
+    )
+    result = group_input(spark_context, system).collect()
+    assert result == [
+        ("a", ["b", "c", "d"]),
+        ("c", ["b"]),
+        ("b", ["c", "d"]),
+        ("d", ["a", "c"]),
+    ]
+
+
+def test_compute_contributions():
+    assert compute_contributions(["b", "c", "d"], 1) == [
+        ("b", 1 / 3),
+        ("c", 1 / 3),
+        ("d", 1 / 3),
+    ]
+
+
+def test_generate_contributions(spark_context):
+    links = spark_context.parallelize(
+        [("a", ["b", "c", "d"]), ("c", ["b"]), ("b", ["c", "d"]), ("d", ["a", "c"])]
+    )
+
+    ranks = spark_context.parallelize([("a", 1.0), ("c", 3.0), ("b", 2.0), ("d", 4.0)])
+
+    assert generate_contributions(spark_context, links, ranks).collect() == [
+        ("b", 3.0),  # contribution from c
+        ("c", 1.0),  # contribution from b
+        ("d", 1.0),  # contribution from b
+        ("a", 2.0),  # contribution from d
+        ("c", 2.0),  # contribution from d
+        ("b", 1 / 3),  # contribution from a
+        ("c", 1 / 3),  # contribution from a
+        ("d", 1 / 3),  # contribution from a
+    ]
+
+
+def test_generate_ranks(spark_context):
+    contributions = spark_context.parallelize(
+        [
+            ("b", 3.0),
+            ("c", 1.0),
+            ("d", 1.0),
+            ("a", 2.0),
+            ("c", 2.0),
+            ("b", 1 / 3),
+            ("c", 1 / 3),
+            ("d", 1 / 3),
+        ]
+    )
+
+    result = generate_ranks(spark_context, contributions, 0.85).collect()
+
+    assert [v for k, v in result if k == "a"][0] == 1.85
+    assert [v for k, v in result if k == "b"][0] - 2.98 < 0.1
+    assert [v for k, v in result if k == "c"][0] - 2.98 < 0.1
+    assert [v for k, v in result if k == "d"][0] - 1.28 < 0.1
+
+
+def test_main(spark_context):
+    def initialize(sc):
+        links = sc.parallelize(
+            [
+                ("a", "b"),
+                ("a", "c"),
+                ("a", "d"),
+                ("c", "b"),
+                ("b", "c"),
+                ("b", "d"),
+                ("d", "a"),
+                ("d", "c"),
+            ]
+        )
+        links = group_input(sc, links).cache()
+        ranks = links.keys().map(lambda url: (url, 0.25))
+        return (links, ranks)
+
+    links, ranks = initialize(spark_context)
+    result = main(spark_context, 1, 0.85, links, ranks)
+
+    assert result.to_dict()["a"][1] == 0.25625
+    assert result.to_dict()["b"][1] - (0.1 + 1 / 3) < 0.1
+    assert result.to_dict()["c"][1] - (0.1 + 1 / 3) < 0.1
+    assert result.to_dict()["d"][1] - 0.327083 < 0.1

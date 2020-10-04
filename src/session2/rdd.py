@@ -1,5 +1,3 @@
-from typing import List
-
 import streamlit as st
 from pyspark import SparkContext
 from pyspark.rdd import RDD
