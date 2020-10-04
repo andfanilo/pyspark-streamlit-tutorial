@@ -1,14 +1,16 @@
-# Pyspark tutorial
+# Pyspark tutorial (using Streamlit)
 
-Welcome to this set of Pyspark exercises with a Streamlit UI for interactive coding.
+Welcome to this set of introductory Pyspark exercises with a Streamlit UI for interactive coding, aimed towards students in Statistics/Business intelligence.
 
-The courses comprises of 3 list of exercises in Streamlit:
+The course comprises of 3 list of exercises:
 
 - `src/session1`: Python warm-up exercises to get you started
 - `src/session2`: Low-level Spark exercises using RDDs
-- `src/session3`: High-level Spark exercises using the Dataframes API with Machine Learning
+- `src/session3`: High-level Spark exercises using the Dataframes API and Machine Learning
 
-Each folder exercise is associated to a Streamlit app to help you visualize your progression and guide interactive coding. If you are working on `src/session1` then you should start the Streamlit `app_session.py` script to help you out.
+Each session is associated with a Streamlit app to help you visualize your progression and guide interactive coding. If you are working on `src/session1` then you should start the Streamlit `app_session.py` script to help you out.
+
+A Streamlit app is structured with unit tests to pass by coding inside the designated methods in `src/session*` folders.
 
 ## Prerequisites
 
@@ -47,5 +49,7 @@ streamlit run src/app_*.py
 ```
 
 Streamlit's app should appear in a new tab in your web browser on http://localhost:8501
+
+Then answer questions in `src/session*/` Python files.
 
 When you are done with the environment, don't forget to deactivate your Anaconda environment : `conda deactivate`

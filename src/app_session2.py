@@ -393,7 +393,7 @@ def display_q4(sc: SparkContext):
     for each county directly in the app by editing the `bar_chart_county` method.
     """
     )
-    bar_chart_county()
+    bar_chart_county(sc)
     display_goto_next_section()
 
 

@@ -78,11 +78,13 @@ def county_count(sc: SparkContext, rdd: RDD) -> RDD:
     raise NotImplementedError()
 
 
-def bar_chart_county(sc: SparkContext, rdd: RDD) -> None:
+def bar_chart_county(sc: SparkContext) -> None:
     """Display a bar chart for the number of occurences for each county
     with Matplotlib, Bokeh, Plotly or Altair...
 
-    Don't return anything, just display in the function directly
+    Don't return anything, just display in the function directly.
+
+    Load and process the data by using the methods you defined previously.
     """
     # YOUR CODE HERE
     raise NotImplementedError()
