@@ -48,8 +48,8 @@ def generate_ranks(sc: SparkContext, contributions: RDD, damping: float) -> RDD:
 def main(
     sc: SparkContext, iterations: int, damping: float, links: RDD, ranks: RDD
 ) -> pd.DataFrame:
-    """Main logic. 
-    
+    """Main logic.
+
     Return pandas dataframe with appended pageranks for each node in order of iterations.
 
     Example:

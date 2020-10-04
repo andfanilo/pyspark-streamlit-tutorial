@@ -398,7 +398,7 @@ def display_q4(sc: SparkContext):
 
 
 def display_pagerank(sc: SparkContext):
-    st.title("Computing Pagerank")
+    st.title("Application - Computing Pagerank")
     st.warning(
         """
         This final bit is algorithmically heavy :skull:
