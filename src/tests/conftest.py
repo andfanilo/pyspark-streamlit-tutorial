@@ -18,3 +18,4 @@ def spark_session():
     spark = SparkSession.builder.config(conf=conf).getOrCreate()
     yield spark
     spark.stop()
+

@@ -245,6 +245,19 @@ def display_q2(spark: SparkSession):
 
 def display_q3(spark: SparkSession):
     st.title("Machine Learning on DataFrames - Titanic example")
+    st.markdown("""
+    Following the evolution of Spark, there are two ways to do Machine Learning on Spark :
+
+    * MLlib, or `spark.mllib`, was the first ML library implemented in the core Spark library and runs on RDDs. As of today, the library is in maintenance mode, but as we did for RDDs vs DataFrames, it is important that we cover some aspects of the older library. MLlib is also the only library that supports training models for Spark Streaming. 
+    * ML, or `spark.ml` is now the primary ML library on Spark, and runs on DataFrames. Its API is close to those of other mainstream librairies like scikit-learn.
+
+    We will dive into both APIs in this notebook, using the `titanic.csv` file for classification purposes on the `Survived` column.
+
+    _If you need a description of the Titanic dataset, [find it here](https://www.kaggle.com/c/titanic/data)_.
+    """)
+
+    
+
     display_goto_next_section()
 
 
